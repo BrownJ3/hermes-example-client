@@ -1,0 +1,10 @@
+{
+  "name": "hermes-example-client",
+  "version": "1.0.0",
+  "description": "Zero-dependency reference client for the Hermes messaging server",
+  "type": "module",
+  "engines": { "node": ">=21" },
+  "bin": { "hermes-chat": "./client.mjs" },
+  "scripts": { "start": "node client.mjs" },
+  "license": "MIT"
+}

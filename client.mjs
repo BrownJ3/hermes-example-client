@@ -44,10 +44,27 @@ let cursors = {};
 try { cursors = JSON.parse(readFileSync(cursorFile, "utf8")); } catch {}
 const saveCursors = () => writeFileSync(cursorFile, JSON.stringify(cursors));
 
-// ---------- login, channel, usernames --------------------------------------
+// ---------- login (with invite support), channel, usernames -----------------
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+const ask = q => new Promise(res => rl.question(q, res));
+
 const creds = { username, password: "password123" }; // demo only!
-const session = await api("POST", "/v1/auth/register", creds)
-  .catch(() => api("POST", "/v1/auth/login", creds));
+async function ensureSession() {
+  try {
+    return await api("POST", "/v1/auth/register", creds);
+  } catch (e) {
+    if (e.message.includes("username_taken"))
+      return api("POST", "/v1/auth/login", creds); // welcome back
+    if (e.message.includes("invite_required")) {
+      // Invite-only server: use HERMES_INVITE or ask the human.
+      const code = process.env.HERMES_INVITE
+        ?? (await ask("This server is invite-only. Enter your invite code: ")).trim();
+      return api("POST", "/v1/auth/register", { ...creds, invite_code: code });
+    }
+    throw e;
+  }
+}
+const session = await ensureSession();
 token = session.token;
 const myID = session.user.id;
 
@@ -64,7 +81,6 @@ async function refreshNames() {
 const who = id => names.get(id) ?? id.slice(0, 10) + "…";
 
 // ---------- rendering -------------------------------------------------------
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 rl.setPrompt(`#${channelName} ${username}> `);
 function show(line) {
   process.stdout.write("\r\x1b[K" + line + "\n");

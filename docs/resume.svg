@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="360" viewBox="0 0 760 360" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">
+  <rect x="4" y="4" width="752" height="352" rx="10" fill="#1a1b26" stroke="#2f334d"/>
+  <rect x="4" y="4" width="752" height="30" rx="10" fill="#24283b"/>
+  <rect x="4" y="24" width="752" height="10" fill="#24283b"/>
+  <circle cx="24" cy="19" r="5" fill="#f7768e"/>
+  <circle cx="42" cy="19" r="5" fill="#e0af68"/>
+  <circle cx="60" cy="19" r="5" fill="#9ece6a"/>
+  <text x="380" y="23" fill="#787c99" text-anchor="middle" font-size="12">alice's terminal — the "never miss a message" demo</text>
+
+  <text x="22" y="62" fill="#9ece6a">$ <tspan fill="#c0caf5">node client.mjs alice</tspan></text>
+  <text x="22" y="88" fill="#565f89">— connected to https://hermes-chat.fly.dev —</text>
+  <text x="22" y="114" fill="#bb9af7">bob: <tspan fill="#c0caf5">are you there?</tspan></text>
+  <text x="22" y="140" fill="#f7768e">^C</text>
+  <text x="120" y="140" fill="#565f89" font-style="italic">← you quit (or your wifi dies, or your laptop sleeps)</text>
+
+  <text x="22" y="176" fill="#565f89" font-style="italic">…bob keeps chatting while you're gone…</text>
+
+  <text x="22" y="212" fill="#9ece6a">$ <tspan fill="#c0caf5">node client.mjs alice</tspan></text>
+  <text x="120" y="238" fill="#565f89" font-style="italic">┌ everything you missed replays, marked ⟳</text>
+  <text x="22" y="264" fill="#e0af68">⟳ <tspan fill="#bb9af7">bob:</tspan> <tspan fill="#c0caf5">guess you left!</tspan></text>
+  <text x="22" y="290" fill="#e0af68">⟳ <tspan fill="#bb9af7">bob:</tspan> <tspan fill="#c0caf5">see you tomorrow (edited)</tspan></text>
+  <text x="22" y="316" fill="#565f89">— connected to https://hermes-chat.fly.dev —</text>
+  <text x="22" y="342" fill="#7aa2f7">#lobby alice&gt; <tspan fill="#7aa2f7">▌</tspan></text>
+</svg>

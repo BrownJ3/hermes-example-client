@@ -1,59 +1,116 @@
-# Hermes example client
+# Hermes chat client
 
-A complete terminal chat client for a [Hermes](https://github.com/BrownJ3/hermes) messaging server in **one file, zero dependencies** — just Node 21+. It exists to show client authors how to talk to Hermes correctly, including the part most chat clients get wrong: never missing a message.
+Chat with other people from your terminal — using a single file of JavaScript you can actually read.
+
+This is the official example client for the [Hermes](https://github.com/BrownJ3/hermes) chat server. It's **one file, no installs beyond Node.js**, and it's written to be learned from: every tricky part has a comment explaining *why* it's there.
+
+<img src="docs/chat.svg" alt="Two terminals chatting with each other" width="760">
+
+## What you need
+
+1. **Node.js, version 21 or newer.** Check what you have:
+
+   ```bash
+   node --version
+   ```
+
+   If that says `command not found` or shows a version below 21, install the "LTS" version from [nodejs.org](https://nodejs.org) — it's a normal installer, next-next-finish.
+
+2. **An invite code** — if the server you're joining is invite-only. Visit the server's `/invite` page (for example `https://hermes-chat.fly.dev/invite`) and fill in the form; the admin will send you a code. You only need it once, the first time you pick a username.
+
+## Step 1 — Get the code
 
 ```bash
-node client.mjs alice            # connects to http://127.0.0.1:8080, joins #lobby
-node client.mjs bob mychannel    # second terminal — chat with yourself
-HERMES_URL=https://your-app.fly.dev node client.mjs alice   # against a deployed server
+git clone https://github.com/BrownJ3/hermes-example-client.git
+cd hermes-example-client
 ```
 
-Type to chat. `/typing` sends a typing indicator, `/quit` exits.
+(No `git`? Click the green **Code** button on GitHub → **Download ZIP**, unzip it, and open a terminal in that folder.)
 
-**Try the durability demo:** run two clients, kill one with Ctrl-C, send a few messages from the other, then restart the killed one — the missed messages replay (marked `⟳`), including any edits and deletions that happened while it was gone. Delete the `.hermes-cursors-<user>.json` file to replay from the beginning of time.
+## Step 2 — Start chatting
 
-> The demo hardcodes `password123` for convenience. Real clients should prompt for credentials.
+Replace `alice` with any username you'd like (this creates your account the first time):
 
-## How a Hermes client works
+```bash
+HERMES_URL=https://hermes-chat.fly.dev node client.mjs alice
+```
 
-Hermes splits responsibilities in a way that makes clients simple:
+You should see something like:
 
-- **All mutations go over REST** (`POST /v1/auth/register`, `POST /v1/channels/{id}/messages`, …) with a `Bearer hm_...` token. You can build a fully working bot with nothing but HTTP polling.
-- **The WebSocket (`/v1/ws`) is read-only**: authenticate by sending `{"type":"hello","token":"..."}` as the first frame (never in the URL), then JSON events arrive for every channel you're a member of. Send `{"type":"ping"}` at least every 60s.
+```
+This server is invite-only. Enter your invite code: inv_xxxxxxxxxxxx
+— connected to https://hermes-chat.fly.dev —
+#lobby alice>
+```
 
-### The resume protocol (the part worth copying)
+That's it — you're in the `#lobby` channel. Type a message and press Enter to send it. Anything other people send appears instantly.
 
-The server assigns every channel mutation — create, edit, delete — a monotonically increasing `update_seq`. Your entire sync state is **one integer per channel**: the highest `update_seq` you've processed.
+> **Windows note:** the `HERMES_URL=...` prefix works in Git Bash and WSL. In PowerShell use:
+> `$env:HERMES_URL="https://hermes-chat.fly.dev"; node client.mjs alice`
 
-On every (re)connect:
+## Step 3 — See the "real time" part
 
-1. Send `hello`. From that moment, **buffer** incoming live frames.
-2. The `hello_ok` reply lists each channel's current `last_seq`. For any channel where `last_seq` > your cursor, page through `GET /v1/channels/{id}/messages?after_update_seq=<cursor>` — it returns new messages, edits, *and* tombstones, in order.
-3. Flush the buffer, **skipping any frame with `update_seq` ≤ your cursor**. Advance the cursor on everything you apply.
+Open a **second** terminal and join as someone else:
 
-The overlap between steps 2 and 3 is harmlessly idempotent — the dedupe rule makes double-delivery a no-op, and because live streaming starts before catch-up runs, nothing can fall into a gap. That's the entire algorithm; in [client.mjs](client.mjs) it's ~30 lines (`catchUp` + the `handle` dedupe check).
+```bash
+HERMES_URL=https://hermes-chat.fly.dev node client.mjs bob
+```
 
-Two close codes matter: `1001` (server restarting) and `1013` (you drained your socket too slowly). Both mean the same thing: reconnect and resume. Nothing was lost.
+Type in one window and watch it appear in the other. You'll also see `• bob is online` presence notices and `… bob is typing` indicators.
 
-### Idempotent sends
+## Step 4 — The magic trick: you can't miss a message
 
-Every message you send carries a `client_msg_id` you generate (a UUID per message). If the request times out, **retry with the same id** — the server returns the originally committed message instead of duplicating it. `client.mjs` demonstrates this in its send handler.
+<img src="docs/resume.svg" alt="Messages sent while you were offline replay when you return" width="760">
 
-## Event reference
+Try it yourself:
 
-Frames you receive (all JSON, discriminated by `"type"`):
+1. Run two clients (alice and bob), like above.
+2. Press **Ctrl-C** in alice's window. She's gone.
+3. Send a few messages as bob.
+4. Start alice again. The messages she missed replay instantly, marked with `⟳` — including any edits or deletions that happened while she was away.
 
-| type | payload |
+How? The client remembers a single number per channel (saved in a hidden `.hermes-cursors-alice.json` file) — "the last change I've seen." When it reconnects, it asks the server for everything after that number. That's the whole trick, and it's about 30 lines of [client.mjs](client.mjs). The details live in [PROTOCOL.md](PROTOCOL.md).
+
+## Cheat sheet
+
+| You type | What happens |
 |---|---|
-| `hello_ok` | `user_id`, `channels: [{id, last_seq}]` |
-| `message.created` / `message.updated` | `channel_id`, `seq`, `update_seq`, `message` |
-| `message.deleted` | `channel_id`, `seq`, `update_seq`, `message_id` |
-| `typing` | `channel_id`, `user_id` (ephemeral) |
-| `presence` | `user_id`, `status: "online"\|"offline"` |
-| `channel.joined` / `channel.left` | `channel_id`, `user_id` |
-| `pong` | reply to your `ping` |
-| `error` | `code`, `message` |
+| any text + Enter | sends the message |
+| `/typing` | shows "… is typing" to others |
+| `/quit` or Ctrl-C | leaves (you'll catch up next time) |
+| `node client.mjs alice mychannel` | joins (or creates) `#mychannel` instead of `#lobby` |
 
-Frames without an `update_seq` (typing, presence, membership) are ephemeral — don't advance your cursor on them.
+## When something goes wrong
 
-The full REST reference (channels, DMs, membership, history pagination, file upload/download, rate limits) lives in the Hermes server's README.
+| You see | What it means |
+|---|---|
+| `command not found: node` | Node.js isn't installed — see "What you need" above |
+| `SyntaxError` mentioning `??` or `import` | your Node is too old — install 21+ |
+| `invite_required` | the server needs an invite code — visit its `/invite` page |
+| `invalid_invite` | that code was already used or mistyped — codes are single-use |
+| `bad_credentials` | that username exists and this password isn't its password — pick a different username |
+| `fetch failed` / `ECONNREFUSED` | wrong `HERMES_URL`, or the server is down — try opening the URL in your browser |
+| `— disconnected (1001…), retrying —` | the server restarted; the client reconnects by itself, nothing is lost |
+
+## How it works (the 60-second version)
+
+The client only ever does two things:
+
+```mermaid
+sequenceDiagram
+    participant C as client.mjs
+    participant S as Hermes server
+    C->>S: REST: register / join / send message
+    S-->>C: 201 — saved to disk (that's your receipt)
+    C->>S: WebSocket: "hello" (token + where I left off)
+    S-->>C: live events: messages, edits, typing, presence…
+```
+
+- **Sending** anything = a normal HTTPS request, like any web API.
+- **Receiving** = one WebSocket connection the server pushes events down.
+
+Splitting it this way means you could delete the entire WebSocket half and the client would still *work* (just not live). If you're learning: read [client.mjs](client.mjs) top to bottom (~200 lines, heavily commented), then [PROTOCOL.md](PROTOCOL.md) when you want to build a client of your own in another language.
+
+## License
+
+MIT — copy anything you like.

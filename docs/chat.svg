@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="270" viewBox="0 0 760 270" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">
+  <!-- alice's terminal -->
+  <g>
+    <rect x="4" y="4" width="366" height="262" rx="10" fill="#1a1b26" stroke="#2f334d"/>
+    <rect x="4" y="4" width="366" height="30" rx="10" fill="#24283b"/>
+    <rect x="4" y="24" width="366" height="10" fill="#24283b"/>
+    <circle cx="24" cy="19" r="5" fill="#f7768e"/>
+    <circle cx="42" cy="19" r="5" fill="#e0af68"/>
+    <circle cx="60" cy="19" r="5" fill="#9ece6a"/>
+    <text x="187" y="23" fill="#787c99" text-anchor="middle" font-size="12">alice's terminal</text>
+    <text x="22" y="60" fill="#9ece6a">$ <tspan fill="#c0caf5">node client.mjs alice</tspan></text>
+    <text x="22" y="88" fill="#565f89">— connected to https://hermes-chat.fly.dev —</text>
+    <text x="22" y="116" fill="#9ece6a">• bob is online</text>
+    <text x="22" y="144" fill="#bb9af7">bob: <tspan fill="#c0caf5">hey alice! 👋</tspan></text>
+    <text x="22" y="180" fill="#7aa2f7">#lobby alice&gt; <tspan fill="#c0caf5">hi bob!</tspan><tspan fill="#7aa2f7">▌</tspan></text>
+  </g>
+  <!-- bob's terminal -->
+  <g>
+    <rect x="390" y="4" width="366" height="262" rx="10" fill="#1a1b26" stroke="#2f334d"/>
+    <rect x="390" y="4" width="366" height="30" rx="10" fill="#24283b"/>
+    <rect x="390" y="24" width="366" height="10" fill="#24283b"/>
+    <circle cx="410" cy="19" r="5" fill="#f7768e"/>
+    <circle cx="428" cy="19" r="5" fill="#e0af68"/>
+    <circle cx="446" cy="19" r="5" fill="#9ece6a"/>
+    <text x="573" y="23" fill="#787c99" text-anchor="middle" font-size="12">bob's terminal</text>
+    <text x="408" y="60" fill="#9ece6a">$ <tspan fill="#c0caf5">node client.mjs bob</tspan></text>
+    <text x="408" y="88" fill="#565f89">— connected to https://hermes-chat.fly.dev —</text>
+    <text x="408" y="116" fill="#bb9af7">alice: <tspan fill="#c0caf5">hi bob!</tspan></text>
+    <text x="408" y="152" fill="#7aa2f7">#lobby bob&gt; <tspan fill="#c0caf5">hey alice! 👋</tspan><tspan fill="#7aa2f7">▌</tspan></text>
+  </g>
+</svg>

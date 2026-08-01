@@ -78,7 +78,7 @@ How? The client remembers a single number per channel (saved in a hidden `.herme
 | any text + Enter | sends the message |
 | `/typing` | shows "… is typing" to others |
 | `/quit` or Ctrl-C | leaves (you'll catch up next time) |
-| `node client.mjs alice mychannel` | joins (or creates) `#mychannel` instead of `#lobby` |
+| `node client.mjs alice mychannel` | joins `#mychannel` instead of `#lobby` (creating channels may be admin-only) |
 
 ## When something goes wrong
 
@@ -89,6 +89,7 @@ How? The client remembers a single number per channel (saved in a hidden `.herme
 | `invite_required` | the server needs an invite code — visit its `/invite` page |
 | `invalid_invite` | that code was already used or mistyped — codes are single-use |
 | `bad_credentials` | that username exists and this password isn't its password — pick a different username |
+| `only admins can create channels` | the channel you named doesn't exist — the client lists ones you can join instead |
 | `fetch failed` / `ECONNREFUSED` | wrong `HERMES_URL`, or the server is down — try opening the URL in your browser |
 | `— disconnected (1001…), retrying —` | the server restarted; the client reconnects by itself, nothing is lost |
 

@@ -70,8 +70,19 @@ const myID = session.user.id;
 
 let chan = (await api("GET", "/v1/channels/browse")).channels
   .find(c => c.name === channelName);
-if (!chan) chan = (await api("POST", "/v1/channels", { name: channelName })).channel;
-else await api("POST", `/v1/channels/${chan.id}/join`).catch(() => {});
+if (!chan) {
+  try {
+    chan = (await api("POST", "/v1/channels", { name: channelName })).channel;
+  } catch (e) {
+    if (e.message.includes("admin_only")) {
+      const names = (await api("GET", "/v1/channels/browse")).channels.map(c => "#" + c.name);
+      console.error(`#${channelName} doesn't exist, and only admins can create channels here.`);
+      console.error(names.length ? `Channels you can join: ${names.join(", ")}` : "No public channels exist yet — ask the admin to create one.");
+      process.exit(1);
+    }
+    throw e;
+  }
+} else await api("POST", `/v1/channels/${chan.id}/join`).catch(() => {});
 
 const names = new Map(); // userID → username
 async function refreshNames() {

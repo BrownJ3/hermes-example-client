@@ -53,6 +53,10 @@ Frames without an `update_seq` (typing, presence, membership) are ephemeral — 
 
 A `message` object: `id`, `channel_id`, `sender_id`, `seq`, `update_seq`, `client_msg_id`, `body`, `created_at` (unix ms), optional `edited_at`, `deleted`, `file_ids`.
 
+## Channels
+
+Users join public channels (`POST /v1/channels/{id}/join`), leave, and open DMs (`POST /v1/dms`, find-or-create) freely. Creating a channel (`POST /v1/channels`) may be restricted: servers default to admin-only creation and answer `403 admin_only` — handle it by offering `GET /v1/channels/browse` results instead (the example client does this). `GET /v1/users/me` includes `is_admin` so your UI can show or hide a "create channel" affordance.
+
 ## History vs catch-up
 
 Both live on the same endpoint:

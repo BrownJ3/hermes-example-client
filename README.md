@@ -16,7 +16,7 @@ This is the official example client for the [Hermes](https://github.com/BrownJ3/
 
    If that says `command not found` or shows a version below 21, install the "LTS" version from [nodejs.org](https://nodejs.org) — it's a normal installer, next-next-finish.
 
-2. **An invite code** — if the server you're joining is invite-only. Visit the server's `/invite` page (for example [hermes-chat.fly.dev/invite](https://hermes-chat.fly.dev/invite)), click **Get my invite code**, and after a second or two of automatic checking your code appears on the page. Copy it — you only need it once, the first time you pick a username. (Codes expire after 48 hours, so grab one when you're ready to use it.)
+2. **An invite code** — if the server you're joining is invite-only. Visit the server's `/invite` page (for example [hermes-chat.fly.dev/invite](https://hermes-chat.fly.dev/invite)), fill in your name and how to reach you, and press **Get my invite code** — after a second or two of automatic checking your code appears on the page. The name you give becomes your display name in the chat. Copy it — you only need it once, the first time you pick a username. (Codes expire after 48 hours, so grab one when you're ready to use it.)
 
 ## Step 1 — Get the code
 

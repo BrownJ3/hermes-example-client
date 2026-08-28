@@ -4,6 +4,8 @@ Chat with other people from your terminal — using a single file of JavaScript 
 
 This is the official example client for the [Hermes](https://github.com/BrownJ3/hermes) chat server. It's **one file, no installs beyond Node.js**, and it's written to be learned from: every tricky part has a comment explaining *why* it's there.
 
+> **Just want to chat?** Every Hermes server also ships a full web client — open the server's `/app/` page (e.g. [hermes-chat.fly.dev/app](https://hermes-chat.fly.dev/app/)) and you're chatting in your browser, nothing to install. *This* repo is for people who want to see how a client works under the hood, or build their own.
+
 <img src="docs/chat.svg" alt="Two terminals chatting with each other" width="760">
 
 ## What you need

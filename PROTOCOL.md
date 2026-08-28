@@ -9,7 +9,9 @@ Everything you need to build your own Hermes client, in any language. The [examp
 
 ## Registration and invites
 
-`POST /v1/auth/register` with `{"username","password","invite_code"?}`. If the server is invite-only you'll get `403 invite_required` without a code and `403 invalid_invite` for a used/unknown one — codes are single-use, but a registration that fails for another reason (e.g. username taken) does **not** consume the code. Humans can request a code at the server's `/invite` page.
+`POST /v1/auth/register` with `{"password","invite_code"?,"username"?}`. If the server is invite-only you'll get `403 invite_required` without a code and `403 invalid_invite` for a used/unknown/expired one — codes are single-use, but a registration that fails for another reason (e.g. username taken) does **not** consume the code. Humans can request a code at the server's `/invite` page.
+
+**Codes carry identity.** Most codes are linked to the name/contact their requester gave. With a linked code, `username` is optional: the server derives the handle from the requester's name (`"Riley Example"` → `riley-example`, deduped with a numeric suffix) and inherits the display name — so a client can offer "code + password" as the entire signup. `GET /v1/invites/{code}` returns `{"name"}` for a valid unused code (`""` for unlinked bulk codes — then a username is required; `404` otherwise), letting your UI show "Creating account for \<name\>" before submitting.
 
 ## The resume protocol (the part worth copying)
 
